@@ -212,10 +212,6 @@ loop_conv = (
 print("\n=== Looping Behaviour vs. Conversion ===")
 print(loop_conv.to_string())
 
-# Section 7 - Visualizations and summary statistics
-
-
-
 
 
 
