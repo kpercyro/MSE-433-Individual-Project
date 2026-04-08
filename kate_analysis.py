@@ -287,3 +287,109 @@ loop_conv = (
 
 print("\n=== Looping Behaviour vs. Conversion ===")
 print(loop_conv.to_string())
+
+
+# =============================================================================
+# SECTION 5 - SUMMARY AND VISUALIZATIONS
+# =============================================================================
+
+import matplotlib.pyplot as plt
+
+# 5.1 Conversion rate by channel (bar chart)
+plt.figure()
+channel_conv["conversion_rate"].sort_values().plot(kind="barh")
+plt.title("Conversion Rate by Channel")
+plt.xlabel("Conversion Rate")
+plt.tight_layout()
+plt.savefig("conversion_rate_by_channel.png")
+plt.close()
+
+# 5.2 Conversion rate by device
+plt.figure()
+device_conv["conversion_rate"].sort_values().plot(kind="bar")
+plt.title("Conversion Rate by Device")
+plt.ylabel("Conversion Rate")
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.savefig("conversion_rate_by_device.png")
+plt.close()
+
+# 5.3 Path length distribution (converters vs non-converters)
+plt.figure()
+session_analysis.boxplot(column="path_length", by="converted", showfliers=False)
+plt.title("Path Length by Conversion")
+plt.suptitle("")
+plt.xlabel("Converted")
+plt.ylabel("Pages in Path")
+plt.tight_layout()
+plt.savefig("path_length_by_conversion.png")
+plt.close()
+
+# 5.4 Session depth distribution
+plt.figure()
+session_metrics["depth_group"].value_counts().sort_index().plot(kind="bar")
+plt.title("Session Depth Distribution")
+plt.ylabel("Number of Sessions")
+plt.xticks(rotation=30)
+plt.tight_layout()
+plt.savefig("session_depth_distribution.png")
+plt.close()
+
+# 5.5 Exit rate (top pages, min traffic filter)
+top_exit = exit_pages[exit_pages["total_hits"] >= 50].nlargest(15, "exit_rate")
+
+plt.figure()
+plt.barh(top_exit["pagePath_clean"].str[-40:], top_exit["exit_rate"])
+plt.title("Top Exit Rate Pages (min 50 hits)")
+plt.xlabel("Exit Rate")
+plt.tight_layout()
+plt.savefig("top_exit_pages.png")
+plt.close()
+
+# 5.6 Looping vs conversion
+loop_rates = loop_conv["conversion_rate"]
+
+plt.figure()
+loop_rates.plot(kind="bar")
+plt.title("Conversion Rate: Looping vs Non-Looping")
+plt.ylabel("Conversion Rate")
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.savefig("looping_vs_conversion.png")
+plt.close()
+
+print("\n=== Visualisations saved as PNG files ===")
+
+# =============================================================================
+# SECTION 6 - EXPORT KEY TABLES FOR ANALYSIS/REPORTING
+# =============================================================================
+
+output_file = "ux_analysis_output.xlsx"
+
+with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
+
+    # 6.1 Session-level metrics
+    session_metrics.to_excel(writer, sheet_name="Session Metrics", index=False)
+
+    # 6.2 Path-level data
+    paths.to_excel(writer, sheet_name="Paths", index=False)
+
+    # 6.3 Top transitions with probabilities
+    top_bigrams.to_excel(writer, sheet_name="Transitions (Prob)", index=False)
+
+    # 6.4 Conversion-based transitions
+    conv_transitions.to_excel(writer, sheet_name="Transitions (Conv)", index=False)
+
+    # 6.5 Exit pages
+    exit_pages.to_excel(writer, sheet_name="Exit Pages", index=False)
+
+    # 6.6 Channel performance
+    channel_conv.to_excel(writer, sheet_name="Channel Conversion")
+
+    # 6.7 Device performance
+    device_conv.to_excel(writer, sheet_name="Device Conversion")
+
+    # 6.8 Entry pages
+    entry_pages.to_frame(name="count").to_excel(writer, sheet_name="Entry Pages")
+
+print(f"\n=== Excel file saved: {output_file} ===")
