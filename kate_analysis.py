@@ -94,7 +94,7 @@ print(f"\nOverall bounce rate:     {session_metrics['is_bounce'].mean():.1%}")
 print(f"Overall conversion rate: {session_metrics['converted'].mean():.1%}")
 print(f"Sessions with looping:   {session_metrics['has_loop'].mean():.1%}")
 
-# SECTION 3 - MAP USER JOURNEYS USING PAGE-PATH PATTERNS
+# SECTION 3 - MAP USER JOURNEYS USING PAGE-PATH PATTERNS AND CONDUCT PATH ANALYSIS
 #now we move from session metrics to user journeys
 
 # 3.1 build user journeys
@@ -104,6 +104,8 @@ paths = (
     .apply(list)
     .reset_index(name="page_paths")
 )
+
+paths["path_length"] = paths["page_paths"].apply(len)
 
 # convert lists to tuples, count unique paths, and identify most common full paths
 path_counts   = Counter(tuple(p) for p in paths["page_paths"])
@@ -146,17 +148,69 @@ exit_pages["exit_rate"] = exit_pages["exit_count"] / exit_pages["total_hits"]
 print("\n=== Top 20 High-Exit Pages ===")
 print(exit_pages.to_string(index=False))
 
-# Section 4- Segment sessions by device type, traffic source, and new vs. returning visitors
+# SECTION 4 - COMPARE CONVERTING VS. NON-CONVERTING SESSIONS TO IDENTIFY KEY DIFFERENCES IN USER BEHAVIOUR
+# 4.1 joining journey data with session metrics to compare converters vs. non-converters on various dimensions
+session_analysis = paths.merge(
+    session_metrics[["session_id", "converted", "device", "channel",
+                     "is_bounce", "has_loop", "new_user", "session_duration",
+                     "depth_group"]],
+    on="session_id"
+)
 
+# 4.2 comparing converting vs. non-converting sessions on numeric metrics like path length and session duration
+numeric_compare = (
+    session_analysis
+    .groupby("converted")[["path_length", "session_duration"]]
+    .agg(["mean", "median"])
+)
+print("\n=== Path Length & Duration: Converters vs. Non-Converters ===")
+print(numeric_compare.to_string())
 
+# 4.3 comparing converting vs. non-converting sessions on categorical metrics like device type, channel, bounce rate, looping behaviour, new vs. returning
+device_conv = (
+    session_metrics
+    .groupby(["device", "converted"])
+    .size()
+    .unstack(fill_value=0)
+    .assign(conversion_rate=lambda x: x[True] / (x[True] + x[False]))
+    .rename(columns={False: "non_converted", True: "converted_count"})
+)
+print("\n=== Conversion Rate by Device ===")
+print(device_conv.to_string())
 
-# Section 5 - Conduct Path Analysis to identify common navigation sequences, looping behaviour and high-exit pages
+channel_conv = (
+    session_metrics
+    .groupby(["channel", "converted"])
+    .size()
+    .unstack(fill_value=0)
+    .assign(conversion_rate=lambda x: x[True] / (x[True] + x[False]))
+    .rename(columns={False: "non_converted", True: "converted_count"})
+    .sort_values("conversion_rate", ascending=False)
+)
+print("\n=== Conversion Rate by Channel ===")
+print(channel_conv.to_string())
 
+new_ret_conv = (
+    session_metrics
+    .groupby(["new_user", "converted"])
+    .size()
+    .unstack(fill_value=0)
+    .assign(conversion_rate=lambda x: x[True] / (x[True] + x[False]))
+    .rename(columns={False: "non_converted", True: "converted_count",
+                     "new_user": "is_new_visitor"})
+)
+print("\n=== Conversion Rate: New vs. Returning Visitors ===")
+print(new_ret_conv.to_string())
 
-
-# Section 6 - Compare converting vs. non-converting sessions to identify key differences in user behaviour
-
-
+loop_conv = (
+    session_metrics
+    .groupby(["has_loop", "converted"])
+    .size()
+    .unstack(fill_value=0)
+    .assign(conversion_rate=lambda x: x[True] / (x[True] + x[False]))
+)
+print("\n=== Looping Behaviour vs. Conversion ===")
+print(loop_conv.to_string())
 
 # Section 7 - Visualizations and summary statistics
 
