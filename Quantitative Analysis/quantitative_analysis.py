@@ -1,13 +1,20 @@
 import pandas as pd
 import numpy as np
 from collections import Counter
+import os
+
+output_dir = os.path.join("Quantitative Analysis")
+
+# Create folder if it doesn't exist
+os.makedirs(output_dir, exist_ok=True)
 
 #=============================================================================
 # SECTION 1 - CLEAN AND PREPARE THE DATASET
 #=============================================================================
 
 # 1.1 Load the dataset
-df = pd.read_csv("data.csv")
+path = os.path.join("Quantitative Analysis", "data.csv")
+df = pd.read_csv(path)
 
 # 1.2 Convert timestamps into usable time formats
 df["visitStartTime"] = pd.to_datetime(df["visitStartTime"], unit="s")
@@ -301,7 +308,7 @@ channel_conv["conversion_rate"].sort_values().plot(kind="barh")
 plt.title("Conversion Rate by Channel")
 plt.xlabel("Conversion Rate")
 plt.tight_layout()
-plt.savefig("conversion_rate_by_channel.png")
+plt.savefig(os.path.join(output_dir, "conversion_rate_by_channel.png"))
 plt.close()
 
 # 5.2 Conversion rate by device
@@ -311,7 +318,7 @@ plt.title("Conversion Rate by Device")
 plt.ylabel("Conversion Rate")
 plt.xticks(rotation=30)
 plt.tight_layout()
-plt.savefig("conversion_rate_by_device.png")
+plt.savefig(os.path.join(output_dir, "conversion_rate_by_device.png"))
 plt.close()
 
 # 5.3 Path length distribution (converters vs non-converters)
@@ -322,7 +329,7 @@ plt.suptitle("")
 plt.xlabel("Converted")
 plt.ylabel("Pages in Path")
 plt.tight_layout()
-plt.savefig("path_length_by_conversion.png")
+plt.savefig(os.path.join(output_dir, "path_length_by_conversion.png"))
 plt.close()
 
 # 5.4 Session depth distribution
@@ -332,7 +339,7 @@ plt.title("Session Depth Distribution")
 plt.ylabel("Number of Sessions")
 plt.xticks(rotation=30)
 plt.tight_layout()
-plt.savefig("session_depth_distribution.png")
+plt.savefig(os.path.join(output_dir, "session_depth_distribution.png"))
 plt.close()
 
 # 5.5 Exit rate (top pages, min traffic filter)
@@ -343,7 +350,7 @@ plt.barh(top_exit["pagePath_clean"].str[-40:], top_exit["exit_rate"])
 plt.title("Top Exit Rate Pages (min 50 hits)")
 plt.xlabel("Exit Rate")
 plt.tight_layout()
-plt.savefig("top_exit_pages.png")
+plt.savefig(os.path.join(output_dir, "session_depth_distribution.png"))
 plt.close()
 
 # 5.6 Looping vs conversion
@@ -355,7 +362,7 @@ plt.title("Conversion Rate: Looping vs Non-Looping")
 plt.ylabel("Conversion Rate")
 plt.xticks(rotation=0)
 plt.tight_layout()
-plt.savefig("looping_vs_conversion.png")
+plt.savefig(os.path.join(output_dir, "looping_vs_conversion.png"))
 plt.close()
 
 print("\n=== Visualisations saved as PNG files ===")
@@ -364,7 +371,7 @@ print("\n=== Visualisations saved as PNG files ===")
 # SECTION 6 - EXPORT KEY TABLES FOR ANALYSIS/REPORTING
 # =============================================================================
 
-output_file = "ux_analysis_output.xlsx"
+output_file = os.path.join(output_dir, "ux_analysis_output.xlsx")
 
 with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
 

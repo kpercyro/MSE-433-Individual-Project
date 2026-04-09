@@ -32,7 +32,7 @@ This project analyzes Google Analytics data from an e-commerce website (Google M
 
 ## Data Description
 
-The analysis uses Google Analytics hit-level data (`data.csv`) containing:
+The analysis uses Google Analytics hit-level data (`Quantitative Analysis/data.csv`) containing:
 
 - **Visitor Information**: `fullVisitorId`, `visitId`, `visitNumber`
 - **Session Data**: `visitStartTime`, `device_category`, `channel_group`
@@ -41,11 +41,30 @@ The analysis uses Google Analytics hit-level data (`data.csv`) containing:
 - **Hit Details**: `hitNumber`, `hit_time_ms`, `hit_type`, `pagePath`, `pageTitle`
 - **Page Flow**: `isExit`, `isEntrance`, `is_new_visitor`
 
+## Project Structure
+
+```
+MSE-433-Individual-Project/
+├── README.md
+├── Qualitative Analysis Documents/
+└── Quantitative Analysis/
+    ├── data.csv                      (Google Analytics dataset)
+    ├── quantitative_analysis.py      (Main analysis script)
+    ├── ux_analysis_output.xlsx       (Generated - Analysis results)
+    ├── conversion_rate_by_channel.png
+    ├── conversion_rate_by_device.png
+    ├── path_length_by_conversion.png
+    ├── session_depth_distribution.png
+    ├── top_exit_pages.png
+    └── looping_vs_conversion.png
+```
+
 ## Usage
 
-Run the analysis script:
+Navigate to the Quantitative Analysis folder and run the analysis script:
 
 ```bash
+cd "Quantitative Analysis"
 python quantitative_analysis.py
 ```
 
