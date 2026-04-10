@@ -4,12 +4,6 @@
 
 This project analyzes Google Analytics data from an e-commerce website (Google Merchandise Store) to understand user behavior, session patterns, conversion funnels, and page-level performance. The analysis provides insights into customer journeys, bounce rates, conversion rates, and transition probabilities between pages.
 
-## Course Information
-
-- **Course**: MSE 433 - Applications of Management Engineering
-- **Term**: Winter 2026
-- **Project Type**: Individual Analysis Project
-
 ## Prerequisites
 
 - Python 3.8 or higher
@@ -46,7 +40,13 @@ The analysis uses Google Analytics hit-level data (`Quantitative Analysis/data.c
 ```
 MSE-433-Individual-Project/
 ├── README.md
-├── Qualitative Analysis Documents/
+└── Qualitative Analysis Documents/
+    ├── MSE 433 Participant 1 - Transcript.pdf
+    ├── MSE 433 Participant 2 - Transcript.pdf
+    ├── MSE 433 Participant 3 - Transcript.pdf
+    ├── MSE 433 Participant 4 - Transcript.pdf
+    ├── MSE 433 Qualitative Analysis.xlsx
+    ├── MSE 433 Qualitative Interview Script.pdf
 └── Quantitative Analysis/
     ├── data.csv                      (Google Analytics dataset)
     ├── quantitative_analysis.py      (Main analysis script)
@@ -132,8 +132,3 @@ The analysis reveals:
 - Conversion bottlenecks
 - Traffic source effectiveness
 - Device and channel preferences
-
-## Author
-
-Kate Percy-Robb
-MSE 433 - Winter 2026
